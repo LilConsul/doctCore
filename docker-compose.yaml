@@ -10,20 +10,15 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=${FAST_REFRESH_UI} # create-ui-app <= 5.x
-      - WATCHPACK_POLLING=${FAST_REFRESH_UI} # create-ui-app >= 5.x
-      - DEBUG=${FRONTEND_DEBUG}
-      - FAST_REFRESH=${FAST_REFRESH}
     depends_on:
       - backend
     networks:
       - database
-    command: npm start -FAST_REFRESH=${FAST_REFRESH}
+    command: npm run dev
 
   ## Backend section ##
   backend:
