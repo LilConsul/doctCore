@@ -3,9 +3,33 @@ networks:
     driver: bridge
 
 services:
+  ## Frontend section ##
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=${FAST_REFRESH_UI} # create-ui-app <= 5.x
+      - WATCHPACK_POLLING=${FAST_REFRESH_UI} # create-ui-app >= 5.x
+      - DEBUG=${FRONTEND_DEBUG}
+      - FAST_REFRESH=${FAST_REFRESH}
+    depends_on:
+      - backend
+    networks:
+      - database
+    command: npm start -FAST_REFRESH=${FAST_REFRESH}
+
   ## Backend section ##
   backend:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: sh -c "uvicorn backend.app.main:app --reload --port=8000 --host=0.0.0.0"
     restart: unless-stopped
     ports:

@@ -9,6 +9,12 @@ class UsersRepository(BaseRepo):
     table_name = "users"
 
     @staticmethod
+    async def get_user_profile_by_email(email: str):
+        sql = text(f"SELECT name, email, phone, role, sex FROM {UsersRepository.table_name} WHERE email = :email")
+        result = await db.exec_query(sql, {'email': email})
+        return result[0] if result else None
+
+    @staticmethod
     async def find_by_name(name: str):
         sql = text(f"SELECT * FROM {UsersRepository.table_name} WHERE name = :name")
         result = await db.exec_query(sql, {'name': name})
