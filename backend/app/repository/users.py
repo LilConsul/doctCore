@@ -1,6 +1,6 @@
 from sqlalchemy.sql import text
 from ..service.database import db
-from ..model.user import User
+from ..model import User
 from .base_repo import BaseRepo
 
 

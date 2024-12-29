@@ -32,25 +32,34 @@ const adminData = {
 
 const doctorData = {
     navMain: [{
-        title: "Dashboard", url: "#", items: [{
-            title: "Overview", url: "#",
-        }, {
-            title: "Reports", url: "#",
-        },],
-    }, {
         title: "Appointments", url: "#", items: [{
-            title: "My Appointments", url: "#",
+            title: "My Appointments", url: "/appointments",
         }, {
-            title: "New Appointment", url: "#",
+            title: "New Appointment", url: "/appointments/new",
+        }, {
+            title: "Appointment History", url: "/appointments/history",
         },],
     }, {
-        title: "Settings", url: "#", items: [{
-            title: "Profile", url: "/profile",
+        title: "Schedule", url: "#", items: [{
+            title: "My Schedule", url: "/schedule",
         }, {
-            title: "Account", url: "#",
+            title: "Edit Schedule", url: "/schedule/edit",
+        }, {
+            title: "Availability", url: "/schedule/availability",
+        },],
+    }, {
+        title: "Medical Records", url: "#", items: [{
+            title: "View Records", url: "/medical-records",
+        }, {
+            title: "Add Notes", url: "/medical-records/add",
+        },],
+    }, {
+        title: "Profile", url: "#", items: [{
+            title: "View Profile", url: "/profile",
         },],
     },]
 };
+
 
 const patientData = {
     navMain: [{

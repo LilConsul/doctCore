@@ -1,3 +1,9 @@
-from .user import User, Role, Sex, EmptyUser
-from .patient import Patient
-from .doctor import Doctor, Specialization
+from .models import (User,
+                     EmptyUser,
+                     Role,
+                     Sex,
+                     Patient,
+                     Doctor,
+                     Specialization,
+                     Appointment,
+                     AppointmentStatus)
