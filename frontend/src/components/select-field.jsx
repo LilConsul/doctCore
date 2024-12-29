@@ -2,10 +2,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Label } from "@/components/ui/label";
 
 const SelectField = ({ id, label, options, value, onChange, error }) => (
-    <div className="grid gap-2">
+    <div className="grid gap-2 w-full">
         <Label htmlFor={id}>{label}</Label>
         <Select onValueChange={(value) => onChange(id, value)}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
                 <SelectValue placeholder={`Select your ${label.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>

@@ -39,3 +39,9 @@ class UsersRepository(BaseRepo):
         sql = text(f"UPDATE {UsersRepository.table_name} SET password = :password WHERE email = :email")
         await db.exec_sql(sql, {'email': email, 'password': password})
 
+    @staticmethod
+    async def update_profile(email: str, **kwargs):
+        set_clause = ', '.join(f"{key} = :{key}" for key in kwargs.keys())
+        sql = text(f"UPDATE {UsersRepository.table_name} SET {set_clause} WHERE email = :email")
+        await db.exec_sql(sql, {'email': email, **kwargs})
+        return await UsersRepository.get_user_profile_by_email(email)

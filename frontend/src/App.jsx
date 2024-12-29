@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Button} from '@/components/ui/button';
+import {Routes, Route, useNavigate} from 'react-router-dom';
+import {AppSidebar} from "@/components/app-sidebar.jsx";
+import {SidebarProvider} from "@/components/ui/sidebar";
+import Profile from "@/Profile";
 
 function App() {
     const [token, setToken] = useState(null);
@@ -19,14 +21,16 @@ function App() {
         return null;
     } else {
         return (
-            <div>
-                <h1>Welcome to the app</h1>
-                <Button onClick={() => {
-                    localStorage.removeItem('token');
-                    setToken(null);
-                    navigate('/auth');
-                }}>Logout</Button>
-            </div>
+            <SidebarProvider>
+                <AppSidebar/>
+                <main>
+                    <Routes>
+                        <Route path="/" element={<div>Hello World!</div>}/>
+                        <Route path="/profile" element={<Profile/>}/>
+                        {/* Add more routes as needed */}
+                    </Routes>
+                </main>
+            </SidebarProvider>
         );
     }
 }

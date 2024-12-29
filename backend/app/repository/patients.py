@@ -9,8 +9,12 @@ class PatientsRepository(UsersRepository):
     table_name = "patients"
 
     @staticmethod
-    async def get_patients():
-        query = text(
-            f"SELECT * FROM {PatientsRepository.table_name} INNER JOIN users ON {PatientsRepository.table_name}.user_id = {UsersRepository.table_name}.id;")
-        result = await db.exec_query(query)
-        return result
+    async def get_profile(email: str):
+        sql = text(f"""
+            SELECT u.name, u.email, u.phone, u.role, u.sex, p.blood_type, p.address, p.birthdate
+            FROM {PatientsRepository.table_name} p
+            INNER JOIN {UsersRepository.table_name} u ON p.user_id = u.id
+            WHERE u.email = :email
+        """)
+        result = await db.exec_query(sql, {'email': email})
+        return result[0] if result else None

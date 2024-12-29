@@ -82,4 +82,5 @@ class DetailSchema(BaseModel):
 
 class ResponseSchema(BaseModel):
     detail: str
+    status_code: Optional[int] = 200
     result: Optional[T] = None
