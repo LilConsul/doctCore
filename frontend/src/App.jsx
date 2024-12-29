@@ -3,6 +3,7 @@ import {Routes, Route, useNavigate} from 'react-router-dom';
 import {AppSidebar} from "@/components/app-sidebar.jsx";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import Profile from "@/Profile";
+import Home from "@/Home.jsx";
 
 function App() {
     const [token, setToken] = useState(null);
@@ -25,7 +26,7 @@ function App() {
                 <AppSidebar/>
                 <main>
                     <Routes>
-                        <Route path="/" element={<div>Hello World!</div>}/>
+                        <Route path="/" element={<Home/>}/>
                         <Route path="/profile" element={<Profile/>}/>
                         {/* Add more routes as needed */}
                     </Routes>

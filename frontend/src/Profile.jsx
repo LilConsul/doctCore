@@ -1,23 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import {Button} from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import FormField from '@/components/form-field';
-import SelectField from '@/components/select-field';
+import ProfileField from '@/components/profile-field';
+import {validateField} from "@/lib/utils.js";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.jsx";
 
 const Profile = () => {
     const [userData, setUserData] = useState({});
-    const [currentField, setCurrentField] = useState(null);
-    const [newFieldValue, setNewFieldValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -41,29 +31,32 @@ const Profile = () => {
         fetchUserData();
     }, []);
 
-    const handleFieldClick = (field) => {
-        setCurrentField(field);
+    const handleSaveChanges = async (field, newFieldValue) => {
+        setSuccessMessage('');
         setErrorMessage('');
-        setNewFieldValue(userData[field]);
-    };
-
-    const handleSaveChanges = async () => {
-        if (currentField === 'email') {
+        if (field === 'email') {
             setErrorMessage('You cannot change your email address due to security reasons.');
             return;
+        }
+        if (field === 'phone') {
+            const validationErrors = validateField(field, newFieldValue, {}, {});
+            if (validationErrors.phone) {
+                setErrorMessage(validationErrors.phone + '. Example: +48 123 456 789');
+                return;
+            }
         }
         try {
             setErrorMessage('');
             const token = localStorage.getItem('auth_token');
             const tokenType = localStorage.getItem('auth_token_type');
-            const updatedData = {[currentField]: newFieldValue};
+            const updatedData = {[field]: newFieldValue};
             const response = await axios.put('http://localhost:8000/users/update-profile', updatedData, {
                 headers: {
                     Authorization: `${tokenType} ${token}`
                 },
             });
-            setUserData(prevState => ({...prevState, [currentField]: newFieldValue}));
-            window.location.reload();
+            setUserData(response.data.result);
+            setSuccessMessage('Changes saved successfully');
         } catch (error) {
             const errorDetail = error.response ? error.response.data.detail : error.message;
             setErrorMessage(typeof errorDetail === 'object' ? JSON.stringify(errorDetail) : errorDetail);
@@ -71,52 +64,27 @@ const Profile = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6">
-            {Object.keys(userData).filter(field => field !== 'role').map((field) => (
-                <div key={field} className="flex justify-between items-center">
-                    <span>{field.charAt(0).toUpperCase() + field.slice(1)}: {userData[field]}</span>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" onClick={() => handleFieldClick(field)}>Edit</Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Edit your {field}</DialogTitle>
-                                <DialogDescription>
-                                    Make changes to your {field} here. Click save when you're done.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-1 items-center">
-                                    {field === 'sex' ? (
-                                        <SelectField
-                                            id={field}
-                                            label="Sex"
-                                            options={[
-                                                {value: "male", label: "Male"},
-                                                {value: "female", label: "Female"},
-                                            ]}
-                                            value={newFieldValue}
-                                            onChange={(id, value) => setNewFieldValue(value)}
-                                        />
-                                    ) : (
-                                        <FormField
-                                            id={field}
-                                            label={field.charAt(0).toUpperCase() + field.slice(1)}
-                                            value={newFieldValue}
-                                            onChange={(e) => setNewFieldValue(e.target.value)}
-                                        />
-                                    )}
-                                </div>
-                            </div>
-                            {errorMessage && <span className="text-red-500">{errorMessage}</span>}
-                            <DialogFooter>
-                                <Button type="submit" onClick={handleSaveChanges}>Save changes</Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            ))}
+        <div className="h-screen ml-10 flex items-center justify-center">
+            <Card className="w-full max-w-md">
+                <CardHeader>
+                    <CardTitle className="flex justify-center w-full">Profile</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col gap-6">
+                        {Object.keys(userData).filter(field => field !== 'role').map((field) => (
+                            <ProfileField
+                                key={field}
+                                field={field}
+                                value={userData[field]}
+                                onEdit={handleSaveChanges}
+                                setErrorMessage={setErrorMessage}
+                            />
+                        ))}
+                    </div>
+                    {errorMessage && <div className="mx-4 text-red-500">{errorMessage}</div>}
+                    {successMessage && <div className="text-green-500">{successMessage}</div>}
+                </CardContent>
+            </Card>
         </div>
     );
 };

@@ -21,11 +21,13 @@ const adminData = {
         }, {
             title: "System Settings", url: "#",
         },],
-    },], projects: [{
-        name: "Manage Users", url: "#", icon: null,
     }, {
-        name: "System Logs", url: "#", icon: null,
-    },],
+        title: "Settings", url: "#", items: [{
+            title: "Profile", url: "/profile",
+        }, {
+            title: "Account", url: "#",
+        }]
+    }]
 };
 
 const doctorData = {
@@ -47,11 +49,7 @@ const doctorData = {
         }, {
             title: "Account", url: "#",
         },],
-    },], projects: [{
-        name: "Manage Patients", url: "#", icon: null,
-    }, {
-        name: "Medical Records", url: "#", icon: null,
-    },],
+    },]
 };
 
 const patientData = {
@@ -73,11 +71,7 @@ const patientData = {
         }, {
             title: "Account", url: "#",
         },],
-    },], projects: [{
-        name: "Health Records", url: "/profile", icon: null,
-    }, {
-        name: "Prescriptions", url: "/profile", icon: null,
-    },],
+    },]
 };
 
 export function AppSidebar({...props}) {
@@ -95,11 +89,36 @@ export function AppSidebar({...props}) {
             setUserData(response.data.result);
         }).catch(error => {
             console.error("Error fetching user data:", error);
+            logout();
         });
     }, []);
 
+
+    const logout = () => {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("auth_token_type");
+        navigate('/auth');
+    };
+
     if (!userData) {
-        return <div>Loading...</div>;
+        return (
+            <Sidebar collapsible="icon" {...props}>
+                <SidebarHeader>
+                    <div className="flex flex-col items-center">
+                        <img src={logo} alt="DoctCore Logo" className="w-12 h-12 mb-2"/>
+                        <span className="text-3xl font-bold">DoctCore</span>
+                        <span className="mt-2 text-sm">Retrieving your data...</span>
+                        <span className="mt-2 text-sm">If it takes too long try to logout</span>
+                    </div>
+                </SidebarHeader>
+                <SidebarContent/>
+                <SidebarFooter>
+                    <Button variant="outline" onClick={logout} className="hover:bg-red-500 hover:text-white">
+                        Logout
+                    </Button>
+                </SidebarFooter>
+                <SidebarRail/>
+            </Sidebar>);
     }
 
     let data;
@@ -117,20 +136,15 @@ export function AppSidebar({...props}) {
             data = {user: defaultUser};
     }
 
-    const logout = () => {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_token_type");
-        navigate('/auth');
-    };
 
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <div className="flex flex-col items-center">
                     <img src={logo} alt="DoctCore Logo" className="w-12 h-12 mb-2"/>
-                    <span className="text-lg font-bold">DoctCore</span>
-                    <span className="mt-2 text-sm font-medium">Role: {userData.role}</span>
+                    <span className="text-3xl font-bold">DoctCore</span>
                     <span className="mt-2 text-sm">Welcome, {userData.name}</span>
+                    <span className="mt-2 text-sm font-medium">Role: {userData.role}</span>
                 </div>
             </SidebarHeader>
             <SidebarContent>
