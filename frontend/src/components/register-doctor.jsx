@@ -1,5 +1,5 @@
-import { cn, validateField } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import {cn, validateField} from "@/lib/utils";
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -7,26 +7,19 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { useState } from "react";
+import {useState} from "react";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import FormField from "@/components/form-field";
+import SelectField from "@/components/select-field";
 
-export function RegisterDoctorForm({ className, ...props }) {
+export function RegisterDoctorForm({className, ...props}) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
         password: "",
+        confirm_password: "",
         sex: "male",
         role: "doctor",
         user_id: 0,
@@ -40,7 +33,7 @@ export function RegisterDoctorForm({ className, ...props }) {
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const { id, value } = e.target;
+        const {id, value} = e.target;
         setFormData((prevData) => ({
             ...prevData,
             [id]: value,
@@ -86,113 +79,96 @@ export function RegisterDoctorForm({ className, ...props }) {
                 <CardContent className="max-h-96 overflow-y-auto">
                     <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    placeholder="John Doe"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.name && <span className="text-red-500">{errors.name}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="johny@example.com"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.email && <span className="text-red-500">{errors.email}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="phone">Phone</Label>
-                                <Input
-                                    id="phone"
-                                    type="tel"
-                                    placeholder="+48 123 456 789"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.phone && <span className="text-red-500">{errors.phone}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.password && <span className="text-red-500">{errors.password}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="confirm_password">Confirm Password</Label>
-                                <Input
-                                    id="confirm_password"
-                                    type="password"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.confirm_password && <span className="text-red-500">{errors.confirm_password}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="specialization">Specialization</Label>
-                                <Select onValueChange={(value) => handleSelectChange("specialization", value)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select your specialization"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="cardiology">Cardiology</SelectItem>
-                                            <SelectItem value="pediatrics">Pediatrics</SelectItem>
-                                            <SelectItem value="neurology">Neurology</SelectItem>
-                                            <SelectItem value="otorhinolaryngology">Otorhinolaryngology</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                {errors.specialization && <span className="text-red-500">{errors.specialization}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="bio">Bio</Label>
-                                <Input
-                                    id="bio"
-                                    type="text"
-                                    placeholder="Short bio"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.bio && <span className="text-red-500">{errors.bio}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="fee">Consultation Fee</Label>
-                                <Input
-                                    id="fee"
-                                    type="number"
-                                    placeholder="100"
-                                    required
-                                    onChange={handleChange}
-                                />
-                                {errors.fee && <span className="text-red-500">{errors.fee}</span>}
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="sex">Sex</Label>
-                                <Select onValueChange={(value) => handleSelectChange("sex", value)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select your sex"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                {errors.sex && <span className="text-red-500">{errors.sex}</span>}
-                            </div>
+                            <FormField
+                                id="name"
+                                label="Name"
+                                placeholder="John Doe"
+                                required
+                                value={formData.name}
+                                onChange={handleChange}
+                                error={errors.name}
+                            />
+                            <FormField
+                                id="email"
+                                label="Email"
+                                type="email"
+                                placeholder="johny@example.com"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                                error={errors.email}
+                            />
+                            <FormField
+                                id="phone"
+                                label="Phone"
+                                type="tel"
+                                placeholder="+48 123 456 789"
+                                required
+                                value={formData.phone}
+                                onChange={handleChange}
+                                error={errors.phone}
+                            />
+                            <FormField
+                                id="password"
+                                label="Password"
+                                type="password"
+                                required
+                                value={formData.password}
+                                onChange={handleChange}
+                                error={errors.password}
+                            />
+                            <FormField
+                                id="confirm_password"
+                                label="Confirm Password"
+                                type="password"
+                                required
+                                value={formData.confirm_password}
+                                onChange={handleChange}
+                                error={errors.confirm_password}
+                            />
+                            <SelectField
+                                id="specialization"
+                                label="Specialization"
+                                options={[
+                                    {value: "cardiology", label: "Cardiology"},
+                                    {value: "pediatrics", label: "Pediatrics"},
+                                    {value: "neurology", label: "Neurology"},
+                                    {value: "otorhinolaryngology", label: "Otorhinolaryngology"},
+                                ]}
+                                value={formData.specialization}
+                                onChange={handleSelectChange}
+                                error={errors.specialization}
+                            />
+                            <FormField
+                                id="bio"
+                                label="Bio"
+                                placeholder="Short bio"
+                                required
+                                value={formData.bio}
+                                onChange={handleChange}
+                                error={errors.bio}
+                            />
+                            <FormField
+                                id="fee"
+                                label="Consultation Fee"
+                                type="number"
+                                placeholder="100"
+                                required
+                                value={formData.fee}
+                                onChange={handleChange}
+                                error={errors.fee}
+                            />
+                            <SelectField
+                                id="sex"
+                                label="Sex"
+                                options={[
+                                    {value: "male", label: "Male"},
+                                    {value: "female", label: "Female"},
+                                ]}
+                                value={formData.sex}
+                                onChange={handleSelectChange}
+                                error={errors.sex}
+                            />
                             <Button type="submit" className="w-full">
                                 Register
                             </Button>

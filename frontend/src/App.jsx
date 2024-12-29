@@ -7,7 +7,7 @@ function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
+        const storedToken = localStorage.getItem('auth_token');
         if (storedToken) {
             setToken(storedToken);
         } else {

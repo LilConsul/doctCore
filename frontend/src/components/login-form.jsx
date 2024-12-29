@@ -7,11 +7,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
 import {useState} from "react";
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
+import FormField from "@/components/form-field";
 
 export function LoginForm({className, ...props}) {
     const [formData, setFormData] = useState({
@@ -37,7 +36,8 @@ export function LoginForm({className, ...props}) {
                 throw new Error('Email or password is incorrect');
             }
             const {token_type, access_token} = response.data.result;
-            localStorage.setItem('token', access_token);
+            localStorage.setItem("auth_token", access_token);
+            localStorage.setItem("auth_token_type", token_type);
             navigate('/');
         } catch (error) {
             const errorDetail = error.response ? error.response.data.detail : error.message;
@@ -57,22 +57,23 @@ export function LoginForm({className, ...props}) {
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    required
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                </div>
-                                <Input id="password" type="password" required onChange={handleChange}/>
-                            </div>
+                            <FormField
+                                id="email"
+                                label="Email"
+                                type="email"
+                                placeholder="your@email.com"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                            <FormField
+                                id="password"
+                                label="Password"
+                                type="password"
+                                required
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
                             {errorMessage && <span className="text-red-500">{errorMessage}</span>}
                             <Button type="submit" className="w-full">
                                 Login
