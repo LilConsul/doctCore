@@ -18,6 +18,8 @@ async def get_user_profile(credentials: HTTPAuthorizationCredentials = Security(
 @router.get("/patient", response_model=ResponseSchema, response_model_exclude_none=True)
 async def get_patient_profile(credentials: HTTPAuthorizationCredentials = Security(JWTBearer())) -> ResponseSchema:
     token = JWTRepo.extract_token(credentials)
+    if not token['role'] == 'patient':
+        return ResponseSchema(status_code=403, detail="Forbidden")
     _result = await PatientsRepository.get_profile(token['email'])
     result_dict = dict(_result) if not isinstance(_result, dict) else _result
     return ResponseSchema(detail="Patient profile retrieved successfully", result=result_dict)
@@ -25,6 +27,8 @@ async def get_patient_profile(credentials: HTTPAuthorizationCredentials = Securi
 @router.get("/doctor", response_model=ResponseSchema, response_model_exclude_none=True)
 async def get_doctor_profile(credentials: HTTPAuthorizationCredentials = Security(JWTBearer())) -> ResponseSchema:
     token = JWTRepo.extract_token(credentials)
+    if not token['role'] == 'doctor':
+        return ResponseSchema(status_code=403, detail="Forbidden")
     _result = await DoctorsRepository.get_profile(token['email'])
     result_dict = dict(_result) if not isinstance(_result, dict) else _result
     return ResponseSchema(detail="Doctor profile retrieved successfully", result=result_dict)

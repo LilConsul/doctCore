@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {AppSidebar} from "@/components/app-sidebar.jsx";
 import {SidebarProvider} from "@/components/ui/sidebar";
-import Profile from "@/Profile";
+import Account from "@/Account.jsx";
 import Home from "@/Home.jsx";
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
                 <main>
                     <Routes>
                         <Route path="/" element={<Home/>}/>
-                        <Route path="/profile" element={<Profile/>}/>
+                        <Route path="/account" element={<Account/>}/>
                         {/* Add more routes as needed */}
                     </Routes>
                 </main>

@@ -4,14 +4,14 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import './index.css';
 import App from './App.jsx';
 import Authentication from './AuthService.jsx';
-import Profile from './Profile.jsx';
+import Account from './Account.jsx';
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <Router>
             <Routes>
                 <Route path="/auth" element={<Authentication/>}/>
-                <Route path="/edit-profile" element={<Profile/>}/>
+                <Route path="/account" element={<Account/>}/>
                 <Route path="*" element={<App/>}/>
             </Routes>
         </Router>

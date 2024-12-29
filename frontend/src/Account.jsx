@@ -4,7 +4,7 @@ import ProfileField from '@/components/profile-field';
 import {validateField} from "@/lib/utils.js";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.jsx";
 
-const Profile = () => {
+const Account = () => {
     const [userData, setUserData] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -89,4 +89,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default Account;

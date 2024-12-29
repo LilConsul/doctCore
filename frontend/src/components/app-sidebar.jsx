@@ -16,17 +16,11 @@ const defaultUser = {
 
 const adminData = {
     navMain: [{
-        title: "Admin Dashboard", url: "#", items: [{
-            title: "User Management", url: "#",
+        title: "New User", url: "#", items: [{
+            title: "Add User", url: "/users/new",
         }, {
-            title: "System Settings", url: "#",
+            title: "View Users", url: "/users",
         },],
-    }, {
-        title: "Settings", url: "#", items: [{
-            title: "Profile", url: "/profile",
-        }, {
-            title: "Account", url: "#",
-        }]
     }]
 };
 
@@ -55,7 +49,7 @@ const doctorData = {
         },],
     }, {
         title: "Profile", url: "#", items: [{
-            title: "View Profile", url: "/profile",
+            title: "Manage account", url: "/account",
         },],
     },]
 };
@@ -76,7 +70,7 @@ const patientData = {
         },],
     }, {
         title: "Settings", url: "#", items: [{
-            title: "Profile", url: "/profile",
+            title: "Manage account", url: "/account",
         }, {
             title: "Account", url: "#",
         },],
