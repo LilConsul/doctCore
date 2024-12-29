@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS users
     email    varchar(255) NOT NULL UNIQUE,
     phone    varchar(255) NOT NULL UNIQUE,
     password varchar(255) NOT NULL,
-    role     ROLE         NOT NULL DEFAULT 'patient',
-    sex      SEX          NOT NULL
+    role     doctcore.ROLE         NOT NULL DEFAULT 'patient',
+    sex      doctcore.SEX          NOT NULL
 );
 
 -- Create doctors table
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS doctors
 (
     id             serial PRIMARY KEY,
     user_id        int REFERENCES users (id) ON DELETE CASCADE,
-    specialization SPECIALIZATION NOT NULL,
+    specialization doctcore.SPECIALIZATION NOT NULL,
     bio            text,
     fee            numeric(10, 2)
 );
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS appointments
     doctor_id  int REFERENCES doctors (id) ON DELETE CASCADE,
     patient_id int REFERENCES patients (id) ON DELETE CASCADE,
     date_time  timestamp,
-    status     APPOINT_STATUS DEFAULT 'pending'
+    status     doctcore.APPOINT_STATUS DEFAULT 'pending'
 );
 
 -- Create payments table
@@ -90,14 +90,14 @@ CREATE TABLE IF NOT EXISTS schedule
 (
     id         serial PRIMARY KEY,
     doctor_id  int REFERENCES doctors (id) ON DELETE CASCADE,
-    day        DAY  NOT NULL,
+    day        doctcore.DAY  NOT NULL,
     start_time time NOT NULL,
     end_time   time NOT NULL
 );
 
 -- Insert sample users with hashed password only if they don't exist
 INSERT INTO users (name, email, phone, password, role, sex)
-SELECT name, email, phone, password, role::ROLE, sex::SEX
+SELECT name, email, phone, password, role::doctcore.ROLE, sex::doctcore.SEX
 FROM (VALUES
     ('John Doe', 'johndoe@example.com', '+48 123 456 789', '$2b$12$IOIYGuTMwQpKv/OSAc6y8.HGFIlgp47eO4laoYfe4dSltvqbW8YY.', 'doctor', 'male'),
     ('Jane Smith', 'janesmith@example.com', '+48 987 654 321', '$2b$12$IOIYGuTMwQpKv/OSAc6y8.HGFIlgp47eO4laoYfe4dSltvqbW8YY.', 'patient', 'female'),
@@ -113,7 +113,7 @@ WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = new_users.email);
 
 -- Insert sample doctors
 INSERT INTO doctors (user_id, specialization, bio, fee)
-SELECT user_id, specialization::SPECIALIZATION, bio, fee FROM (VALUES
+SELECT user_id, specialization::doctcore.SPECIALIZATION, bio, fee FROM (VALUES
     ((SELECT id FROM users WHERE email = 'johndoe@example.com'), 'cardiology', 'Experienced cardiologist with over 10 years in practice.', 100.00),
     ((SELECT id FROM users WHERE email = 'bobjohnson@example.com'), 'neurology', 'Specialized in neurological disorders and brain injuries.', 150.00),
     ((SELECT id FROM users WHERE email = 'michaelwilson@example.com'), 'pediatrics', 'Expert in child healthcare and development.', 120.00),
@@ -134,7 +134,7 @@ WHERE NOT EXISTS (SELECT 1 FROM patients WHERE user_id = new_patients.user_id);
 
 -- Insert sample appointments
 INSERT INTO appointments (doctor_id, patient_id, date_time, status)
-SELECT doctor_id, patient_id, date_time::timestamp, status::APPOINT_STATUS
+SELECT doctor_id, patient_id, date_time::timestamp, status::doctcore.APPOINT_STATUS
 FROM (VALUES
     ((SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'johndoe@example.com')),
      (SELECT id FROM patients WHERE user_id = (SELECT id FROM users WHERE email = 'janesmith@example.com')),
@@ -182,7 +182,7 @@ WHERE NOT EXISTS (
 
 -- Insert sample schedule
 INSERT INTO schedule (doctor_id, day, start_time, end_time)
-SELECT doctor_id, day::DAY, start_time::time, end_time::time FROM (VALUES
+SELECT doctor_id, day::doctcore.DAY, start_time::time, end_time::time FROM (VALUES
     ((SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'johndoe@example.com')), 'Monday', '09:00:00', '17:00:00'),
     ((SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'bobjohnson@example.com')), 'Tuesday', '10:00:00', '18:00:00'),
     ((SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'michaelwilson@example.com')), 'Wednesday', '08:00:00', '16:00:00'),
@@ -193,3 +193,22 @@ WHERE NOT EXISTS (
     FROM schedule
     WHERE doctor_id = new_schedule.doctor_id
 );
+
+-- Insert random payments for existing appointments
+-- Insert sample payments
+INSERT INTO payments (appointment_id, amount, is_paid)
+SELECT appointment_id, amount, is_paid
+FROM (VALUES
+    ((SELECT id FROM appointments WHERE doctor_id = (SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'johndoe@example.com'))
+      AND patient_id = (SELECT id FROM patients WHERE user_id = (SELECT id FROM users WHERE email = 'janesmith@example.com'))
+      AND date_time = '2024-12-30 09:00:00'), 100.00, TRUE),
+    ((SELECT id FROM appointments WHERE doctor_id = (SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'bobjohnson@example.com'))
+      AND patient_id = (SELECT id FROM patients WHERE user_id = (SELECT id FROM users WHERE email = 'alicebrown@example.com'))
+      AND date_time = '2024-12-30 11:00:00'), 120.00, TRUE),
+    ((SELECT id FROM appointments WHERE doctor_id = (SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'michaelwilson@example.com'))
+      AND patient_id = (SELECT id FROM patients WHERE user_id = (SELECT id FROM users WHERE email = 'emilydavis@example.com'))
+      AND date_time = '2024-12-31 10:00:00'), 80.00, FALSE),
+    ((SELECT id FROM appointments WHERE doctor_id = (SELECT id FROM doctors WHERE user_id = (SELECT id FROM users WHERE email = 'davidanderson@example.com'))
+      AND patient_id = (SELECT id FROM patients WHERE user_id = (SELECT id FROM users WHERE email = 'sarahtaylor@example.com'))
+      AND date_time = '2024-12-31 14:00:00'), 150.00, TRUE)
+) AS new_payments(appointment_id, amount, is_paid);
