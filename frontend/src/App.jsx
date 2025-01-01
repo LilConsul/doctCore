@@ -28,7 +28,6 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/account" element={<Account/>}/>
-                        {/* Add more routes as needed */}
                     </Routes>
                 </main>
             </SidebarProvider>
