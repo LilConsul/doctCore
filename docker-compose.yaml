@@ -40,7 +40,7 @@ services:
 
   ## Database section ##
   postgres:
-    image: postgres:latest
+    image: postgres:17
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -48,7 +48,7 @@ services:
     ports:
       - ${DB_PORT}:${DB_PORT}
     volumes:
-      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/init_database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - database
 

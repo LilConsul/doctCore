@@ -17,3 +17,14 @@ class DoctorsRepository(UsersRepository):
         """)
         result = await db.exec_query(sql, {'email': email})
         return result[0] if result else None
+
+    @staticmethod
+    async def get_doctor_id(email: str):
+        sql = text(f"""
+            SELECT d.id
+            FROM {DoctorsRepository.table_name} d
+            INNER JOIN {UsersRepository.table_name} u ON d.user_id = u.id
+            WHERE u.email = :email
+        """)
+        result = await db.exec_query(sql, {'email': email})
+        return result[0]['id'] if result else None

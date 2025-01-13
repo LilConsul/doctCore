@@ -38,8 +38,6 @@ const doctorData = {
             title: "My Schedule", url: "/schedule",
         }, {
             title: "Edit Schedule", url: "/schedule/edit",
-        }, {
-            title: "Availability", url: "/schedule/availability",
         },],
     }, {
         title: "Medical Records", url: "#", items: [{

@@ -13,6 +13,7 @@ class AppointmentsRepository(BaseRepo):
     async def find_by_doctor_email(email: str):
         sql = text(f"""
             SELECT
+                a.id,
                 u.name,
                 u.phone,
                 u.email,
@@ -42,6 +43,7 @@ class AppointmentsRepository(BaseRepo):
     async def find_by_patient_email(email: str):
         sql = text(f"""
             SELECT
+                a.id,
                 du.name AS doctor_name,
                 du.phone AS doctor_phone,
                 du.email AS doctor_email,
@@ -63,3 +65,63 @@ class AppointmentsRepository(BaseRepo):
         })
         return result
 
+    @staticmethod
+    async def create_appointment(appointment: dict, patient_email: str = None, doctor_email: str = None):
+        if patient_email:
+            appointment['patient_id'] = await PatientsRepository.get_patient_id(patient_email)
+        if doctor_email:
+            appointment['doctor_id'] = await DoctorsRepository.get_doctor_id(doctor_email)
+        appointment['status'] = AppointmentStatus.pending.value
+        result = await AppointmentsRepository.create(**appointment)
+        return result
+
+    @staticmethod
+    async def find_by_id(appointment_id: int):
+        sql = text(f"""
+            SELECT
+                a.id,
+                u.name,
+                u.phone,
+                u.email,
+                a.date_time,
+                a.status,
+                d.specialization,
+                d.bio,
+                d.fee
+            FROM {AppointmentsRepository.table_name} a
+            JOIN {UsersRepository.table_name} u ON a.patient_id = u.id
+            JOIN {DoctorsRepository.table_name} d ON a.doctor_id = d.id
+            WHERE a.id = :appointment_id
+        """)
+        result = await db.exec_query(sql, {'appointment_id': appointment_id})
+        return result[0] if result else None
+
+    @staticmethod
+    async def update_appointment_status(appointment_id: int, status: str):
+        appointment = await AppointmentsRepository.find_by_id(appointment_id)
+        if not appointment:
+            return None
+        appointment['status'] = status
+        result = await AppointmentsRepository.update(appointment_id, **appointment)
+        return result
+
+    @staticmethod
+    async def get_history_by_doctor_email(email: str):
+        sql = text(f"""
+            SELECT
+                a.id,
+                u.name,
+                u.phone,
+                u.email,
+                a.date_time,
+                a.status,
+                d.specialization,
+                d.bio,
+                d.fee
+            FROM {AppointmentsRepository.table_name} a
+            JOIN {UsersRepository.table_name} u ON a.patient_id = u.id
+            JOIN {DoctorsRepository.table_name} d ON a.doctor_id = d.id
+            WHERE d.email = :doctor_email
+        """)
+        result = await db.exec_query(sql, {'doctor_email': email})
+        return result

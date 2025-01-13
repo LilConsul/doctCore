@@ -1,6 +1,7 @@
-from .model import Role, Sex, Specialization
+from .model import Role, Sex, Specialization, AppointmentStatus, Day
 from pydantic import BaseModel, field_validator
 from typing import TypeVar, Optional
+from datetime import datetime
 
 from fastapi import HTTPException
 import re
@@ -84,3 +85,15 @@ class ResponseSchema(BaseModel):
     detail: str
     status_code: Optional[int] = 200
     result: Optional[T] = None
+
+class AppointmentSchema(BaseModel):
+    doctor_id: int
+    patient_id: int
+    date_time: datetime
+    status: AppointmentStatus
+
+class ScheduleSchema(BaseModel):
+    doctor_id: int
+    day: Day
+    start_time: datetime
+    end_time: datetime

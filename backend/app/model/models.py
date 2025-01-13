@@ -100,3 +100,24 @@ class MedicalRecord(BaseModel):
 
     class Config:
         from_attributes  = True
+
+class Day(str, Enum):
+    monday = "monday"
+    tuesday = "tuesday"
+    wednesday = "wednesday"
+    thursday = "thursday"
+    friday = "friday"
+    saturday = "saturday"
+    sunday = "sunday"
+    workweek = "workweek"
+    weekend = "weekend"
+
+class Schedule(BaseModel):
+    id: int
+    doctor_id: int
+    day: Day
+    start_time: datetime
+    end_time: datetime
+
+    class Config:
+        from_attributes  = True
