@@ -57,8 +57,7 @@ class AppointmentsRepository(BaseRepo):
             JOIN {UsersRepository.table_name} u ON p.user_id = u.id
             JOIN {DoctorsRepository.table_name} d ON a.doctor_id = d.id
             JOIN {UsersRepository.table_name} du ON d.user_id = du.id
-            WHERE
-                u.email = :patient_email;
+            WHERE u.email = :patient_email;
         """)
         result = await db.exec_query(sql, {
             'patient_email': email
@@ -97,10 +96,17 @@ class AppointmentsRepository(BaseRepo):
         return result[0] if result else None
 
     @staticmethod
+    async def get_appoint(appointment_id: int):
+        sql = text(f""" SELECT * FROM {AppointmentsRepository.table_name} WHERE id = :appointment_id """)
+        result = await db.exec_query(sql, {'appointment_id': appointment_id})
+        return result[0] if result else None
+
+    @staticmethod
     async def update_appointment_status(appointment_id: int, status: str):
-        appointment = await AppointmentsRepository.find_by_id(appointment_id)
+        appointment = await AppointmentsRepository.get_appoint(appointment_id)
         if not appointment:
             return None
+        appointment = dict(appointment)
         appointment['status'] = status
         result = await AppointmentsRepository.update(appointment_id, **appointment)
         return result
@@ -113,15 +119,18 @@ class AppointmentsRepository(BaseRepo):
                 u.name,
                 u.phone,
                 u.email,
+                u.sex,
+                p.blood_type,
+                p.address,
+                p.birthdate,
                 a.date_time,
-                a.status,
-                d.specialization,
-                d.bio,
-                d.fee
+                a.status
             FROM {AppointmentsRepository.table_name} a
-            JOIN {UsersRepository.table_name} u ON a.patient_id = u.id
+            JOIN {PatientsRepository.table_name} p ON a.patient_id = p.id
+            JOIN {UsersRepository.table_name} u ON p.user_id = u.id
             JOIN {DoctorsRepository.table_name} d ON a.doctor_id = d.id
-            WHERE d.email = :doctor_email
+            JOIN {UsersRepository.table_name} du ON d.user_id = du.id
+            WHERE du.email = :doctor_email
         """)
         result = await db.exec_query(sql, {'doctor_email': email})
         return result
