@@ -30,11 +30,12 @@ def init_app():
     async def startup():
         await db.init()
 
-    from .controller import users, authentication, appointments, schedules
+    from .controller import users, authentication, appointments, schedules, medical_records
     app.include_router(users.router)
     app.include_router(authentication.router)
     app.include_router(appointments.router)
     app.include_router(schedules.router)
+    app.include_router(medical_records.router)
 
     return app
 

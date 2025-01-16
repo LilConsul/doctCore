@@ -97,3 +97,9 @@ class ScheduleSchema(BaseModel):
     day: Day
     start_time: datetime
     end_time: datetime
+
+class MedicalRecordSchema(BaseModel):
+    doctor_id: Optional[int] = None
+    patient_id: int
+    diagnosis: str
+    treatment: str

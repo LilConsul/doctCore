@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { format } from 'date-fns';
 import {
     Card,
     CardContent,
@@ -16,16 +15,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const api = axios.create({
     baseURL: 'http://localhost:8000',
@@ -50,7 +43,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-const CreateAppointmentPage = () => {
+const CreateMedicalRecordPage = () => {
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -58,8 +51,8 @@ const CreateAppointmentPage = () => {
 
     const [formData, setFormData] = useState({
         patient_id: '',
-        date: null,
-        time: '09:00'
+        diagnosis: '',
+        treatment: ''
     });
 
     useEffect(() => {
@@ -99,15 +92,6 @@ const CreateAppointmentPage = () => {
                 typeof patient.name === 'string'
             ));
 
-            if (validPatients.length === 0 && patientData.length > 0) {
-                console.warn('No valid patients found in:', patientData);
-                toast({
-                    variant: "destructive",
-                    title: "Warning",
-                    description: "No valid patient data found"
-                });
-            }
-
             setPatients(validPatients);
         } catch (error) {
             console.error('Error fetching patients:', error);
@@ -125,7 +109,7 @@ const CreateAppointmentPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.patient_id || !formData.date || !formData.time) {
+        if (!formData.patient_id || !formData.diagnosis || !formData.treatment) {
             toast({
                 variant: "destructive",
                 title: "Validation Error",
@@ -137,35 +121,30 @@ const CreateAppointmentPage = () => {
         setSubmitting(true);
 
         try {
-            const dateTime = new Date(formData.date);
-            const [hours, minutes] = formData.time.split(':');
-            dateTime.setHours(parseInt(hours), parseInt(minutes));
-            const formattedDateTime = dateTime.toISOString().split("Z")[0];
-
-            const appointmentData = {
+            const medicalRecordData = {
                 patient_id: parseInt(formData.patient_id),
-                date_time: formattedDateTime,
-                status: 'pending'
+                diagnosis: formData.diagnosis,
+                treatment: formData.treatment
             };
 
-            await api.post('/appointments/new', appointmentData, {
+            await api.post('/medical-records/new', medicalRecordData, {
                 headers: getAuthHeaders()
             });
 
             toast({
                 title: "Success",
-                description: "Appointment created successfully"
+                description: "Medical record created successfully"
             });
 
             setFormData({
                 patient_id: '',
-                date: null,
-                time: '09:00'
+                diagnosis: '',
+                treatment: ''
             });
         } catch (error) {
             const errorMessage = typeof error.response?.data?.detail === 'string'
                 ? error.response.data.detail
-                : "Failed to create appointment";
+                : "Failed to create medical record";
 
             toast({
                 variant: "destructive",
@@ -177,19 +156,13 @@ const CreateAppointmentPage = () => {
         }
     };
 
-    const timeSlots = Array.from({ length: 17 }, (_, i) => {
-        const hour = Math.floor(i / 2) + 9;
-        const minute = (i % 2) * 30;
-        return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-    });
-
     return (
         <div className="container mx-auto py-6">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-2xl">Create New Appointment</CardTitle>
+                    <CardTitle className="text-2xl">Create Medical Record</CardTitle>
                     <CardDescription>
-                        Schedule a new appointment with a patient
+                        Add a new medical record for a patient
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -227,55 +200,27 @@ const CreateAppointmentPage = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Select Date</label>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className={cn(
-                                                "w-full justify-start text-left font-normal",
-                                                !formData.date && "text-muted-foreground"
-                                            )}
-                                        >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {formData.date ? format(formData.date, "PPP") : "Pick a date"}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={formData.date}
-                                            onSelect={(date) =>
-                                                setFormData(prev => ({ ...prev, date }))
-                                            }
-                                            disabled={(date) =>
-                                                date < new Date() || date.getDay() === 0 || date.getDay() === 6
-                                            }
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
+                                <label className="text-sm font-medium">Diagnosis</label>
+                                <Textarea
+                                    value={formData.diagnosis}
+                                    onChange={(e) =>
+                                        setFormData(prev => ({ ...prev, diagnosis: e.target.value }))
+                                    }
+                                    placeholder="Enter diagnosis details"
+                                    className="min-h-[100px]"
+                                />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Select Time</label>
-                                <Select
-                                    value={formData.time}
-                                    onValueChange={(value) =>
-                                        setFormData(prev => ({ ...prev, time: value }))
+                                <label className="text-sm font-medium">Treatment</label>
+                                <Textarea
+                                    value={formData.treatment}
+                                    onChange={(e) =>
+                                        setFormData(prev => ({ ...prev, treatment: e.target.value }))
                                     }
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select time" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {timeSlots.map((time) => (
-                                            <SelectItem key={time} value={time}>
-                                                {time}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                    placeholder="Enter treatment plan"
+                                    className="min-h-[100px]"
+                                />
                             </div>
 
                             <Button
@@ -289,7 +234,7 @@ const CreateAppointmentPage = () => {
                                         Creating...
                                     </>
                                 ) : (
-                                    'Create Appointment'
+                                    'Create Medical Record'
                                 )}
                             </Button>
                         </form>
@@ -301,4 +246,4 @@ const CreateAppointmentPage = () => {
     );
 };
 
-export default CreateAppointmentPage;
+export default CreateMedicalRecordPage;

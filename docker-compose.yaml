@@ -52,16 +52,16 @@ services:
     networks:
       - database
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
-    ports:
-      - "5000:80"
-    depends_on:
-      - postgres
-    networks:
-      - database
+#  pgadmin:
+#    image: dpage/pgadmin4:latest
+#    restart: always
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
+#    ports:
+#      - "5000:80"
+#    depends_on:
+#      - postgres
+#    networks:
+#      - database
 

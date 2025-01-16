@@ -95,8 +95,8 @@ class MedicalRecord(BaseModel):
     patient_id: int
     doctor_id: int
     diagnosis: str
-    prescription: str
-    date_time: datetime
+    treatment: str
+    date: datetime
 
     class Config:
         from_attributes  = True

@@ -7,6 +7,9 @@ import Home from "@/Home.jsx";
 import AppointmentsPage from "@/Appointments.jsx";
 import AppointmentsHistory from "@/AppointmentsHistory.jsx";
 import CreateAppointmentPage from "@/CreateAppointment.jsx";
+import MedicalRecordsPage from "./MedicalRecordsPage.jsx";
+import CreateMedicalRecordPage from "./CreateMedicalRecord.jsx";
+import SchedulePage from "./Shedule.jsx";
 
 function App() {
     const [token, setToken] = useState(null);
@@ -34,6 +37,10 @@ function App() {
                         <Route path="/appointments" element={<AppointmentsPage/>}/>
                         <Route path="/appointments/history" element={<AppointmentsHistory/>}/>
                         <Route path="/appointments/new" element={<CreateAppointmentPage/>}/>
+                        <Route path="/schedule" element={<SchedulePage/>}/>
+                        <Route path="/medical-records" element={<MedicalRecordsPage/>}/>
+                        <Route path="/medical-records/add" element={<CreateMedicalRecordPage/>}/>
+
                     </Routes>
                 </main>
             </SidebarProvider>

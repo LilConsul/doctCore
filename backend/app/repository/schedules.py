@@ -2,9 +2,9 @@ from sqlalchemy.sql import text
 
 from . import AppointmentsRepository
 from ..service.database import db
-from ..model import Schedule, Day, AppointmentStatus
+from ..model import Schedule
 from .base_repo import BaseRepo
-from ..repository import UsersRepository, PatientsRepository, DoctorsRepository
+from ..repository import UsersRepository, DoctorsRepository
 
 
 class ScheduleRepository(BaseRepo):
