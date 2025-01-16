@@ -40,3 +40,12 @@ async def update_user_profile(user: EmptyUser,credentials: HTTPAuthorizationCred
     if not _result:
         return ResponseSchema(status_code=404, detail="User not found")
     return ResponseSchema(detail="User profile updated successfully", result=dict(_result))
+
+@router.get("/list-patients", response_model=ResponseSchema, response_model_exclude_none=True)
+async def get_all_patients(credentials: HTTPAuthorizationCredentials = Security(JWTBearer())) -> ResponseSchema:
+    token = JWTRepo.extract_token(credentials)
+    if not token['role'] == 'doctor':
+        return ResponseSchema(status_code=403, detail="Forbidden")
+    _result = await PatientsRepository.get_list()
+    result_dict = [dict(result) for result in _result] if _result else []
+    return ResponseSchema(detail="Patients retrieved successfully", result=result_dict)

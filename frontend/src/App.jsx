@@ -6,6 +6,7 @@ import Account from "@/Account.jsx";
 import Home from "@/Home.jsx";
 import AppointmentsPage from "@/Appointments.jsx";
 import AppointmentsHistory from "@/AppointmentsHistory.jsx";
+import CreateAppointmentPage from "@/CreateAppointment.jsx";
 
 function App() {
     const [token, setToken] = useState(null);
@@ -32,6 +33,7 @@ function App() {
                         <Route path="/account" element={<Account/>}/>
                         <Route path="/appointments" element={<AppointmentsPage/>}/>
                         <Route path="/appointments/history" element={<AppointmentsHistory/>}/>
+                        <Route path="/appointments/new" element={<CreateAppointmentPage/>}/>
                     </Routes>
                 </main>
             </SidebarProvider>

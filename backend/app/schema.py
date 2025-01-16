@@ -87,8 +87,8 @@ class ResponseSchema(BaseModel):
     result: Optional[T] = None
 
 class AppointmentSchema(BaseModel):
-    doctor_id: int
-    patient_id: int
+    doctor_id: Optional[int] = None
+    patient_id: Optional[int] = None
     date_time: datetime
     status: AppointmentStatus
 

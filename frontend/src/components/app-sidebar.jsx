@@ -36,9 +36,7 @@ const doctorData = {
     }, {
         title: "Schedule", url: "#", items: [{
             title: "My Schedule", url: "/schedule",
-        }, {
-            title: "Edit Schedule", url: "/schedule/edit",
-        },],
+        }]
     }, {
         title: "Medical Records", url: "#", items: [{
             title: "View Records", url: "/medical-records",
