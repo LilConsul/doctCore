@@ -1,6 +1,6 @@
 # doctCore
 
-doctCore is a university full-stack web development project for medical appointment system to show skills  in SQL. It allows doctors to manage their schedules, patients to book appointments, and both to access medical records securely. The project focuses on using [Tailwind CSS](https://tailwindcss.com/), React, Python and PosgreSQL.
+doctCore is a university full-stack web development project for medical appointment system to show skills  in SQL. It allows doctors to manage their schedules, patients to book appointments, and both to access medical records securely. The project focuses on using [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), React, Python and PosgreSQL.
 
 ## Features
 - User Authentication – Secure login and registration using JWT.
