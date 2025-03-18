@@ -4,11 +4,11 @@ from sqlalchemy import text
 import os
 
 DB_CONFIG = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(
-    os.getenv('DB_USER'),
-    os.getenv('DB_PASSWORD'),
-    os.getenv('DB_HOST'),
-    os.getenv('DB_PORT'),
-    os.getenv('DB_NAME')
+    os.getenv("DB_USER"),
+    os.getenv("DB_PASSWORD"),
+    os.getenv("DB_HOST"),
+    os.getenv("DB_PORT"),
+    os.getenv("DB_NAME"),
 )
 
 
@@ -23,9 +23,11 @@ class AsyncDatabase:
                 DB_CONFIG,
                 future=True,
                 echo=True,
-                execution_options={"row_factory": lambda cursor, row: dict(row)}
+                execution_options={"row_factory": lambda cursor, row: dict(row)},
             )
-            self.session = sessionmaker(bind=self.engine, expire_on_commit=False, class_=AsyncSession)
+            self.session = sessionmaker(
+                bind=self.engine, expire_on_commit=False, class_=AsyncSession
+            )
         except Exception as e:
             print(f"Error creating engine: {e}")
 

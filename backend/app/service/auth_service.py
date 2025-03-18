@@ -28,14 +28,16 @@ class AuthService:
         if _phone:
             raise HTTPException(status_code=400, detail="Phone number already exists!")
 
-        _user = User(name=register.name,
-                     email=register.email,
-                     phone=register.phone,
-                     password=pwd_context.hash(register.password),
-                     role=register.role,
-                     sex=register.sex)
+        _user = User(
+            name=register.name,
+            email=register.email,
+            phone=register.phone,
+            password=pwd_context.hash(register.password),
+            role=register.role,
+            sex=register.sex,
+        )
         created_user = await UsersRepository.create(**_user.dict())
-        return created_user[0]['id']
+        return created_user[0]["id"]
 
     @staticmethod
     async def register_patient(register: PatientSchema):
@@ -43,17 +45,21 @@ class AuthService:
         if not user_id:
             raise HTTPException(status_code=400, detail="User not created!")
         try:
-            birth_date = datetime.strptime(register.birth, '%d-%m-%Y').date()
-            _patient = Patient(user_id=user_id,
-                               blood_type=register.blood_type,
-                               address=register.address,
-                               birthdate=birth_date)
+            birth_date = datetime.strptime(register.birth, "%d-%m-%Y").date()
+            _patient = Patient(
+                user_id=user_id,
+                blood_type=register.blood_type,
+                address=register.address,
+                birthdate=birth_date,
+            )
             print(_patient.dict(exclude_none=True))
             await PatientsRepository.create(**_patient.dict(exclude_none=True))
 
         except ValueError as e:
             await UsersRepository.delete(user_id)
-            raise HTTPException(status_code=400, detail="Invalid birth date format. Use 'DD-MM-YYYY'.")
+            raise HTTPException(
+                status_code=400, detail="Invalid birth date format. Use 'DD-MM-YYYY'."
+            )
 
         except Exception as e:
             await UsersRepository.delete(user_id)
@@ -65,10 +71,12 @@ class AuthService:
         if not user_id:
             raise HTTPException(status_code=400, detail="User not created!")
         try:
-            _doctor = Doctor(user_id=user_id,
-                             specialization=register.specialization,
-                             bio=register.bio,
-                             fee=register.fee)
+            _doctor = Doctor(
+                user_id=user_id,
+                specialization=register.specialization,
+                bio=register.bio,
+                fee=register.fee,
+            )
             await DoctorsRepository.create(**_doctor.dict(exclude_none=True))
         except Exception as e:
             await UsersRepository.delete(user_id)
@@ -78,9 +86,11 @@ class AuthService:
     async def login_service(login: LoginSchema):
         _user = await UsersRepository.find_by_email(login.email)
         if _user:
-            if not pwd_context.verify(login.password, _user['password']):
+            if not pwd_context.verify(login.password, _user["password"]):
                 raise HTTPException(status_code=400, detail="Invalid Password!")
-            return JWTRepo(data={"email": _user.email, "role": _user.role}).generate_token()
+            return JWTRepo(
+                data={"email": _user.email, "role": _user.role}
+            ).generate_token()
         raise HTTPException(status_code=404, detail="Email not found!")
 
     # @staticmethod

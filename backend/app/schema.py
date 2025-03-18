@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import HTTPException
 import re
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class RegisterSchema(BaseModel):
@@ -32,6 +32,7 @@ class RegisterSchema(BaseModel):
             raise HTTPException(status_code=400, detail="Invalid input sex")
         return v
 
+
 class PatientSchema(RegisterSchema):
     role: Role = Role.patient
     user_id: int
@@ -45,6 +46,7 @@ class PatientSchema(RegisterSchema):
         if v and not re.search(blood_type_regex, v, re.I):
             raise HTTPException(status_code=400, detail="Invalid input blood type!")
         return v
+
 
 class DoctorSchema(RegisterSchema):
     role: Role = Role.doctor
@@ -64,6 +66,7 @@ class DoctorSchema(RegisterSchema):
         if v < 0:
             raise HTTPException(status_code=400, detail="Invalid input fee")
         return v
+
 
 class LoginSchema(BaseModel):
     email: str
@@ -86,17 +89,20 @@ class ResponseSchema(BaseModel):
     status_code: Optional[int] = 200
     result: Optional[T] = None
 
+
 class AppointmentSchema(BaseModel):
     doctor_id: Optional[int] = None
     patient_id: Optional[int] = None
     date_time: datetime
     status: AppointmentStatus
 
+
 class ScheduleSchema(BaseModel):
     doctor_id: int
     day: Day
     start_time: datetime
     end_time: datetime
+
 
 class MedicalRecordSchema(BaseModel):
     doctor_id: Optional[int] = None

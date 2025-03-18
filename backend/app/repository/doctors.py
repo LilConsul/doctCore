@@ -3,6 +3,7 @@ from .users import UsersRepository
 from ..service.database import db
 from sqlalchemy.sql import text
 
+
 class DoctorsRepository(UsersRepository):
     model = Doctor
     table_name = "doctors"
@@ -15,7 +16,7 @@ class DoctorsRepository(UsersRepository):
             INNER JOIN {UsersRepository.table_name} u ON d.user_id = u.id
             WHERE u.email = :email
         """)
-        result = await db.exec_query(sql, {'email': email})
+        result = await db.exec_query(sql, {"email": email})
         return result[0] if result else None
 
     @staticmethod
@@ -26,5 +27,5 @@ class DoctorsRepository(UsersRepository):
             INNER JOIN {UsersRepository.table_name} u ON d.user_id = u.id
             WHERE u.email = :email
         """)
-        result = await db.exec_query(sql, {'email': email})
-        return result[0]['id'] if result else None
+        result = await db.exec_query(sql, {"email": email})
+        return result[0]["id"] if result else None

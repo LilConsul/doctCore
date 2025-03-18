@@ -24,7 +24,8 @@ class User(BaseModel):
     sex: Sex
 
     class Config:
-        from_attributes  = True
+        from_attributes = True
+
 
 class EmptyUser(User):
     name: Optional[str] = None
@@ -33,6 +34,7 @@ class EmptyUser(User):
     password: Optional[str] = None
     role: Optional[Role] = None
     sex: Optional[Sex] = None
+
 
 class Patient(User):
     user_id: int = -1
@@ -66,10 +68,12 @@ class Doctor(User):
     bio: str
     fee: int
 
+
 class AppointmentStatus(str, Enum):
     pending = "pending"
     approved = "approved"
     rejected = "rejected"
+
 
 class Appointment(BaseModel):
     id: int
@@ -79,7 +83,8 @@ class Appointment(BaseModel):
     status: AppointmentStatus
 
     class Config:
-        from_attributes  = True
+        from_attributes = True
+
 
 class Payment(BaseModel):
     id: int
@@ -88,7 +93,8 @@ class Payment(BaseModel):
     is_paid: bool
 
     class Config:
-        from_attributes  = True
+        from_attributes = True
+
 
 class MedicalRecord(BaseModel):
     id: int
@@ -99,7 +105,8 @@ class MedicalRecord(BaseModel):
     date: datetime
 
     class Config:
-        from_attributes  = True
+        from_attributes = True
+
 
 class Day(str, Enum):
     monday = "monday"
@@ -112,6 +119,7 @@ class Day(str, Enum):
     workweek = "workweek"
     weekend = "weekend"
 
+
 class Schedule(BaseModel):
     id: int
     doctor_id: int
@@ -120,4 +128,4 @@ class Schedule(BaseModel):
     end_time: datetime
 
     class Config:
-        from_attributes  = True
+        from_attributes = True

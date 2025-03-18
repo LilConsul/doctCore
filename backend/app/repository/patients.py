@@ -16,7 +16,7 @@ class PatientsRepository(UsersRepository):
             INNER JOIN {UsersRepository.table_name} u ON p.user_id = u.id
             WHERE u.email = :email
         """)
-        result = await db.exec_query(sql, {'email': email})
+        result = await db.exec_query(sql, {"email": email})
         return result[0] if result else None
 
     @staticmethod
@@ -27,8 +27,8 @@ class PatientsRepository(UsersRepository):
             INNER JOIN {UsersRepository.table_name} u ON p.user_id = u.id
             WHERE u.email = :email
         """)
-        result = await db.exec_query(sql, {'email': email})
-        return result[0]['id'] if result else None
+        result = await db.exec_query(sql, {"email": email})
+        return result[0]["id"] if result else None
 
     @staticmethod
     async def get_list():

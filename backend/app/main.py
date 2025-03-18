@@ -4,33 +4,32 @@ from fastapi import FastAPI
 from .service import db
 
 
-origins= [
-    "http://localhost:8000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-]
+origins = ["http://localhost:8000", "http://localhost:5173", "http://127.0.0.1:5173"]
 
 
 def init_app():
-    app = FastAPI(
-        title="DoctCore API",
-        description="API for DoctCore",
-        version="0.1"
-    )
+    app = FastAPI(title="DoctCore API", description="API for DoctCore", version="0.1")
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
-        allow_headers=["*"]
+        allow_headers=["*"],
     )
 
     @app.on_event("startup")
     async def startup():
         await db.init()
 
-    from .controller import users, authentication, appointments, schedules, medical_records
+    from .controller import (
+        users,
+        authentication,
+        appointments,
+        schedules,
+        medical_records,
+    )
+
     app.include_router(users.router)
     app.include_router(authentication.router)
     app.include_router(appointments.router)
@@ -41,4 +40,3 @@ def init_app():
 
 
 app = init_app()
-

@@ -16,7 +16,7 @@ class ScheduleRepository(BaseRepo):
         doctor = await DoctorsRepository.find_by_email(doctor_email)
         if not doctor:
             return None
-        schedule['doctor_id'] = doctor['id']
+        schedule["doctor_id"] = doctor["id"]
         result = await ScheduleRepository.create(**schedule)
         return result
 
@@ -34,7 +34,7 @@ class ScheduleRepository(BaseRepo):
             WHERE
                 u.email = :doctor_email;
         """)
-        result = await db.exec_query(sql, {'doctor_email': email})
+        result = await db.exec_query(sql, {"doctor_email": email})
         return result
 
     @staticmethod

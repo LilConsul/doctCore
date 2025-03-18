@@ -7,9 +7,10 @@ from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-ALGORITHM = os.getenv('ALGORITHM')
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
 
 class JWTRepo:
     def __init__(self, data: dict = {}, token: str = None):
@@ -28,8 +29,7 @@ class JWTRepo:
 
     def decode_token(self):
         try:
-            decode_token = jwt.decode(
-                self.token, SECRET_KEY, algorithms=[ALGORITHM])
+            decode_token = jwt.decode(self.token, SECRET_KEY, algorithms=[ALGORITHM])
             return decode_token if decode_token["expires"] >= datetime.time() else None
         except:
             return {}
@@ -44,19 +44,40 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
+        credentials: HTTPAuthorizationCredentials = await super(
+            JWTBearer, self
+        ).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(
-                    status_code=403, detail={"status": "Forbidden", "message": "Invalid authentication schema."})
+                    status_code=403,
+                    detail={
+                        "status": "Forbidden",
+                        "message": "Invalid authentication schema.",
+                    },
+                )
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(
-                    status_code=403, detail={"status": "Forbidden", "message": "Invalid token or expired token."})
+                    status_code=403,
+                    detail={
+                        "status": "Forbidden",
+                        "message": "Invalid token or expired token.",
+                    },
+                )
             return credentials.credentials
         else:
             raise HTTPException(
-                status_code=403, detail={"status": "Forbidden", "message": "Invalid authorization code."})
+                status_code=403,
+                detail={
+                    "status": "Forbidden",
+                    "message": "Invalid authorization code.",
+                },
+            )
 
     @staticmethod
     def verify_jwt(jwt_token: str):
-        return True if jwt.decode(jwt_token, SECRET_KEY, algorithms=[ALGORITHM]) is not None else False
+        return (
+            True
+            if jwt.decode(jwt_token, SECRET_KEY, algorithms=[ALGORITHM]) is not None
+            else False
+        )

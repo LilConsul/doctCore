@@ -6,9 +6,8 @@ from . import PatientsRepository, UsersRepository, DoctorsRepository
 
 
 class MedicalRecordRepository(BaseRepo):
-    table_name = 'medical_records'
+    table_name = "medical_records"
     model = MedicalRecord
-
 
     @staticmethod
     async def get_all_medical_records():
